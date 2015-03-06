@@ -1,3 +1,7 @@
+<% # sometimes it thinks we're in root rather than /config
+  file =  File.join File.dirname(__FILE__), '..', 'lib', 'keys.rb'
+  File.exists?(file) ? require(file) : require(File.join(File.dirname(__FILE__), 'lib', 'keys.rb'))
+%>
 # MySQL.  Versions 5.0+ are recommended.
 #
 # Install the MYSQL driver
@@ -15,18 +19,34 @@ default: &default
   pool: 5
   username: root
   password:
-  socket: /tmp/mysql.sock
 
 development:
   <<: *default
-  database: ssn_poc_development
+  database: ssn_development
+  username: ssn_development
+  socket: <%= [
+      '/var/lib/mysql/mysql.sock',
+      '/var/run/mysqld/mysqld.sock',
+      '/tmp/mysqld.sock',
+      '/tmp/mysql.sock',
+    ].detect { |socket| File.exist?(socket) } %>
+  password: <%= Keys.get "database" %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: ssn_poc_test
+  database: ssn_test
+  username:  travis
+#  username: myl_test
+  socket: <%= [
+      '/var/lib/mysql/mysql.sock',
+      '/var/run/mysqld/mysqld.sock',
+      '/tmp/mysqld.sock',
+      '/tmp/mysql.sock',
+    ].detect { |socket| File.exist?(socket) } %>
+#  password: <%= Keys.get "database" %>
 
 # As with config/secrets.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -49,6 +69,11 @@ test:
 #
 production:
   <<: *default
-  database: ssn_poc_production
-  username: ssn_poc
-  password: <%= ENV['SSN_POC_DATABASE_PASSWORD'] %>
+  database: ssn_production
+  username: ssn_production
+  host: mysql.ssn.s.ai
+  password: <%= Keys.get "database" %>
+
+
+cucumber:
+  <<: *test
