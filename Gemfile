@@ -37,9 +37,9 @@ gem 'jbuilder'#, '~> 2.0'
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc'#, '~> 0.4.0', group: :doc
 
-if RUBY_PLATFORM =~ /linux/
-  gem 'fcgi'
-end
+# group :fcgi do
+#   gem 'fcgi'
+# end
 
 group :development do
   gem 'capistrano', require: false#, '>= 3.0.1'
@@ -99,4 +99,4 @@ gem "strip_attributes"#, ">= 1.1.0"
 
 gem 'friendly_id'#, ">= 5.0.0"
 
-gem 'ssn_validator'
+# gem 'ssn_validator'
