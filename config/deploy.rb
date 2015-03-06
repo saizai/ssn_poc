@@ -1,4 +1,5 @@
 # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }
+set :rvm_ruby_string, 'ruby-2.2.0'
 
 set :application, 'ssn_poc'  # Required
 

@@ -42,7 +42,7 @@ group :development do
   gem 'capistrano', require: false#, '>= 3.0.1'
   gem 'capistrano-rails', require: false
   gem 'capistrano-bundler', require: false
-  # gem 'capistrano-rvm', require: false
+  gem 'capistrano-rvm', require: false
   # gem 'capistrano-puma', require: false # use service instead
 
   # gem 'capistrano-ci' # not cap3 compatible yet https://github.com/railsware/capistrano-ci/pull/4
