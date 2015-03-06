@@ -66,9 +66,9 @@ namespace :deploy do
       ['bin', 'bundle', 'config', 'db', 'log', 'tmp', 'tmp/cache', 'tmp/pids', 'vendor', 'vendor/bundle'].each do |i|
         execute "chmod 2751 #{shared_path}/#{i}"
       end
-      ['tmp/sockets', 'tmp/sockets/*.sock'].each do |i|
-        execute "chmod 2770 #{shared_path}/#{i}"
-      end
+      # ['tmp/sockets', 'tmp/sockets/*.sock'].each do |i|
+      #   execute "chmod 2770 #{shared_path}/#{i}"
+      # end
       execute "chmod 2755 #{shared_path}/public"
     end
   end
