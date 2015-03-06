@@ -74,6 +74,6 @@ production:
   host: mysql.ssn.s.ai
   password: <%= Keys.get "database" %>
 
-
-cucumber:
-  <<: *test
+#
+# cucumber:
+#   <<: *test
