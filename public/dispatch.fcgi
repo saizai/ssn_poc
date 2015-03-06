@@ -10,6 +10,9 @@ ENV['GEM_PATH'] = File.expand_path('~/.rvm/gems/ruby-2.2.0') + ":" +
 
 require 'rubygems'
 Gem.clear_paths
+require 'bundler'
+Bundler.setup(:default, :fcgi)
+require 'rack'
 require 'fcgi'
 
 require File.join(File.dirname(__FILE__), '../config/environment.rb')
@@ -20,12 +23,22 @@ class Rack::PathInfoRewriter
  end
 
  def call(env)
-   env.delete('SCRIPT_NAME')
-   parts = env['REQUEST_URI'].split('?')
-   env['PATH_INFO'] = parts[0]
-   env['QUERY_STRING'] = parts[1].to_s
+   # env.delete('SCRIPT_NAME')
+   env['SCRIPT_NAME'] = ''  # Don't delete it--Rack::URLMap assumes it is not nil
+   pathInfo, query = env['REQUEST_URI'].split('?', 2)
+   env['PATH_INFO'] = pathInfo
+   env['QUERY_STRING'] = query
    @app.call(env)
  end
 end
 
-Rack::Handler::FastCGI.run  Rack::PathInfoRewriter.new(SsnPoc::Application)
+app, options = Rack::Builder.parse_file('config.ru')
+wrappedApp = Rack::Builder.new do
+  use Rack::ShowExceptions
+  use Rack::PathInfoRewriter
+  run app
+end
+
+Rack::Handler::FastCGI.run wrappedApp
+
+# Rack::Handler::FastCGI.run  Rack::PathInfoRewriter.new(SsnPoc::Application)
