@@ -37,9 +37,7 @@ gem 'jbuilder'#, '~> 2.0'
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc'#, '~> 0.4.0', group: :doc
 
-# group :fcgi do
-#   gem 'fcgi'
-# end
+gem 'fcgi'
 
 group :development do
   gem 'capistrano', require: false#, '>= 3.0.1'
