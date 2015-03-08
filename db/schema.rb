@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150306191850) do
+ActiveRecord::Schema.define(version: 20150306211258) do
 
   create_table "death_master_files", force: :cascade do |t|
     t.string  "change_type",              limit: 1
@@ -53,5 +53,13 @@ ActiveRecord::Schema.define(version: 20150306191850) do
 
   add_index "ssn_high_group_codes", ["area", "as_of"], name: "idx_area_as_of", using: :btree
   add_index "ssn_high_group_codes", ["area"], name: "idx_area", using: :btree
+
+  create_table "states", force: :cascade do |t|
+    t.string "name",   limit: 60
+    t.string "abbrev", limit: 2
+  end
+
+  add_index "states", ["abbrev"], name: "index_states_on_abbrev", unique: true, using: :btree
+  add_index "states", ["name"], name: "index_states_on_name", unique: true, using: :btree
 
 end
