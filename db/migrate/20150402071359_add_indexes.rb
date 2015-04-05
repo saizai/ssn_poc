@@ -1,26 +1,27 @@
 class AddIndexes < ActiveRecord::Migration
   def change
-    change_table :death_master_files do |t|
-      t.change :ssn, :integer, limit: 4, unsigned: true
-      t.change :ssn_an, :integer, limit: 2, unsigned: true
-      t.change :ssn_gn,  :integer, limit: 1, unsigned: true
-      t.change :ssn_sn, :integer, limit: 2, unsigned: true
-      t.change :death_month, :integer, limit: 1, unsigned: true
-      t.change :death_day, :integer, limit: 1, unsigned: true
-      t.change :death_year, :integer, limit: 1, unsigned: true
-      t.change :birth_month, :integer, limit: 1, unsigned: true
-      t.change :birth_day, :integer, limit: 1, unsigned: true
-      t.change :birth_year, :integer, limit: 1, unsigned: true
 
-      t.integer :lifespan, unsigned: true
+    with_tmp_table :death_master_files do |t|
+      change_column t, :ssn, :integer, limit: 4, unsigned: true
+      change_column t, :ssn_an, :integer, limit: 2, unsigned: true
+      change_column t, :ssn_gn,  :integer, limit: 1, unsigned: true
+      change_column t, :ssn_sn, :integer, limit: 2, unsigned: true
+      change_column t, :death_month, :integer, limit: 1, unsigned: true
+      change_column t, :death_day, :integer, limit: 1, unsigned: true
+      change_column t, :death_year, :integer, limit: 1, unsigned: true
+      change_column t, :birth_month, :integer, limit: 1, unsigned: true
+      change_column t, :birth_day, :integer, limit: 1, unsigned: true
+      change_column t, :birth_year, :integer, limit: 1, unsigned: true
 
-      # t.index [:last_name, :ssn_an, :birth_date], name: :idx_name_an_dob
-      t.index [:last_name, :first_name]
-      t.index [:ssn_an, :lifespan]
-      t.index [:birth_date, :lifespan]
-      t.index [:death_year, :death_month, :lifespan], name: :idx_dod_lifespan
-      t.index [:last_name, :lifespan]
-      t.index [:first_name, :lifespan]
+      add_column t, :lifespan, :integer, unsigned: true
+
+      add_index t, [:last_name, :ssn_an, :birth_date], name: :idx_name_an_dob
+      add_index t, [:last_name, :first_name]
+      add_index t, [:ssn_an, :lifespan]
+      add_index t, [:birth_date, :lifespan]
+      add_index t, [:death_year, :death_month, :lifespan], name: :idx_dod_lifespan
+      add_index t, [:last_name, :lifespan]
+      add_index t, [:first_name, :lifespan]
     end
 
     DeathMasterFile.find_each do |r|

@@ -1,3 +1,5 @@
+gem 'mysql_big_table_migration', git: 'http://github.com/analog-analytics/mysql_big_table_migration'
+
 source 'https://rubygems.org' do
 
   platform(:rbx) do
