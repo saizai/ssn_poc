@@ -8,11 +8,12 @@ class AddIndexes < ActiveRecord::Migration
       change_column t, :ssn_sn, :integer, limit: 2, unsigned: true
       change_column t, :death_month, :integer, limit: 1, unsigned: true
       change_column t, :death_day, :integer, limit: 1, unsigned: true
-      change_column t, :death_year, :integer, limit: 1, unsigned: true
+      change_column t, :death_year, :integer, limit: 2, unsigned: true
       change_column t, :birth_month, :integer, limit: 1, unsigned: true
       change_column t, :birth_day, :integer, limit: 1, unsigned: true
-      change_column t, :birth_year, :integer, limit: 1, unsigned: true
+      change_column t, :birth_year, :integer, limit: 2, unsigned: true
 
+      # in days
       add_column t, :lifespan, :integer, unsigned: true
 
       add_index t, [:last_name, :ssn_an, :birth_date], name: :idx_name_an_dob
