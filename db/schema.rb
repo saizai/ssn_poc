@@ -11,11 +11,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150402071359) do
+ActiveRecord::Schema.define(version: 20150408135329) do
 
   create_table "death_master_files", force: :cascade do |t|
     t.string  "change_type",              limit: 1
-    t.integer "ssn",                      limit: 4,  unsigned: true
     t.integer "ssn_an",                   limit: 2,  unsigned: true
     t.integer "ssn_gn",                   limit: 1,  unsigned: true
     t.integer "ssn_sn",                   limit: 2,  unsigned: true
@@ -26,30 +25,22 @@ ActiveRecord::Schema.define(version: 20150402071359) do
     t.string  "verify_proof_code",        limit: 1
     t.integer "death_month",              limit: 1,  unsigned: true
     t.integer "death_day",                limit: 1,  unsigned: true
-    t.integer "death_year",               limit: 1,  unsigned: true
-    t.date    "death_date"
+    t.integer "death_year",               limit: 2,  unsigned: true
     t.integer "birth_month",              limit: 1,  unsigned: true
     t.integer "birth_day",                limit: 1,  unsigned: true
-    t.integer "birth_year",               limit: 1,  unsigned: true
-    t.date    "birth_date"
+    t.integer "birth_year",               limit: 2,  unsigned: true
     t.string  "state_of_residence",       limit: 2
     t.string  "last_known_zip_residence", limit: 5
     t.string  "last_known_zip_payment",   limit: 5
     t.string  "extra",                    limit: 7
     t.date    "as_of"
-    t.integer "lifespan",                 limit: 4,  unsigned: true
+    t.integer "lifespan",                 limit: 3,  unsigned: true
   end
 
-  add_index "death_master_files", ["birth_date", "lifespan"], name: "index_death_master_files_on_birth_date_and_lifespan", using: :btree
-  add_index "death_master_files", ["birth_year", "birth_month", "birth_day", "ssn_an", "ssn_gn", "ssn_sn"], name: "idx_dob_ssn", using: :btree
-  add_index "death_master_files", ["death_year", "death_month", "lifespan"], name: "idx_dod_lifespan", using: :btree
-  add_index "death_master_files", ["first_name", "lifespan"], name: "index_death_master_files_on_first_name_and_lifespan", using: :btree
-  add_index "death_master_files", ["last_name", "first_name"], name: "index_death_master_files_on_last_name_and_first_name", using: :btree
-  add_index "death_master_files", ["last_name", "lifespan"], name: "index_death_master_files_on_last_name_and_lifespan", using: :btree
-  add_index "death_master_files", ["last_name", "ssn_an", "birth_date"], name: "idx_name_an_dob", using: :btree
-  add_index "death_master_files", ["ssn", "as_of"], name: "index_death_master_files_on_ssn_and_as_of", unique: true, using: :btree
-  add_index "death_master_files", ["ssn_an", "lifespan"], name: "index_death_master_files_on_ssn_an_and_lifespan", using: :btree
-  add_index "death_master_files", ["ssn_an", "ssn_gn", "ssn_sn"], name: "index_death_master_files_on_ssn_an_and_ssn_gn_and_ssn_sn", using: :btree
+  add_index "death_master_files", ["birth_year", "birth_month", "ssn_an"], name: "idx_dob_ssn", using: :btree
+  add_index "death_master_files", ["last_name", "first_name"], name: "idx_last_name_first_name", using: :btree
+  add_index "death_master_files", ["last_name", "ssn_an"], name: "idx_last_name_an_dob", using: :btree
+  add_index "death_master_files", ["ssn_an", "ssn_gn", "ssn_sn", "as_of"], name: "idx_ssn_as_of", unique: true, using: :btree
 
   create_table "ssn_high_group_codes", force: :cascade do |t|
     t.date     "as_of"

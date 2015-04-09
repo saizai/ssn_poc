@@ -16,8 +16,8 @@ class AddIndexes < ActiveRecord::Migration
       # in days
       add_column t, :lifespan, :integer, unsigned: true
 
-      # add_index t, [:last_name, :ssn_an, :birth_date], name: :idx_last_name_an_dob
-      # add_index t, [:last_name, :first_name], name: :idx_last_name_first_name
+      add_index t, [:last_name, :ssn_an, :birth_date], name: :idx_last_name_an_dob
+      add_index t, [:last_name, :first_name], name: :idx_last_name_first_name
       add_index t, [:ssn_an, :lifespan]
       add_index t, [:birth_date, :lifespan]
       add_index t, [:death_year, :death_month, :lifespan], name: :idx_dod_lifespan

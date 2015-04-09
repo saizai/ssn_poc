@@ -25,18 +25,21 @@ class DeathMasterFile < ActiveRecord::Base
 
   AN_NAMES = AREAS.inject({}){|h,v| v[1].each{|i| h[i].nil? ? h[i] = v[0].to_s : h[i] += ', ' + v[0].to_s}; h}
 
+  # [:change_type, :ssn_an, :ssn_gn, :ssn_sn, :last_name, :name_suffix,
+  #      :first_name, :middle_name, :verify_proof_code, :death_month, :death_day,
+  #      :death_year, :birth_month, :birth_day, :birth_year, :state_of_residence,
+  #      :last_known_zip_residence, :last_known_zip_payment, :extra, :as_of]
+
   def self.parse_line_array line, date = Date.today
-    [(line[0].blank? ? nil : line[0]), line[1..9].to_i, line[1..3].to_i, line[4..5].to_i,
+    [(line[0].blank? ? nil : line[0]), line[1..3].to_i, line[4..5].to_i,
       line[6..9].to_i, (line[10..29].blank? ? nil : line[10..29].strip),
       (line[30..33].blank? ? nil : line[30..33].strip),
       (line[34..48].blank? ? nil : line[34..48].strip),
       (line[49..63].blank? ? nil : line[49..63].strip),
       (line[64].blank? ? nil : line[64]),
-      sanitize_date(line[65..72]),
       ((line[65..66].blank? || line[65..66].to_i == 0) ? nil : line[65..66].to_i),
       ((line[67..68].blank? || line[67..68].to_i == 0) ? nil : line[67..68].to_i),
       ((line[69..72].blank? || line[69..72].to_i == 0) ? nil : line[69..72].to_i),
-      sanitize_date(line[73..80]),
       ((line[73..74].blank? || line[73..74].to_i == 0) ? nil : line[73..74].to_i),
       ((line[75..76].blank? || line[75..76].to_i == 0) ? nil : line[75..76].to_i),
       ((line[77..80].blank? || line[77..80].to_i == 0) ? nil : line[77..80].to_i),
@@ -46,29 +49,13 @@ class DeathMasterFile < ActiveRecord::Base
       (line[93..99].blank? ? nil : line[93..99].strip), date ]
   end
 
-  def self.sanitize_date date
-    return nil if date.to_i == 0 || date.blank?
-
-    # Format: MMDDYYYY
-    month, day, year = date[0..1].to_i, date[2..3].to_i, date[4..7].to_i
-    if day > 28 && month == 2 # FIXME: should account for leap years
-      return nil
-    elsif year < 1800
-      return nil
-    elsif (day == 0) || (month == 0)
-      return nil
-    end
-
-    Date.new(year, month, day) rescue nil
-  end
-
   def self.import_from_file filename, after = 0, date = Date.today
     file = File.open(filename, 'r')
     batch = []
-    column_names = [:change_type, :ssn, :ssn_an, :ssn_gn, :ssn_sn, :last_name, :name_suffix,
-      :first_name, :middle_name, :verify_proof_code, :death_date, :death_month, :death_day,
-      :death_year, :birth_date, :birth_month, :birth_day, :birth_year, :state_of_residence,
-      :last_known_zip_residence, :last_known_zip_payment, :extra, :as_of]
+    column_names = [:change_type, :ssn_an, :ssn_gn, :ssn_sn, :last_name, :name_suffix,
+       :first_name, :middle_name, :verify_proof_code, :death_month, :death_day,
+       :death_year, :birth_month, :birth_day, :birth_year, :state_of_residence,
+       :last_known_zip_residence, :last_known_zip_payment, :extra, :as_of]
     while line = file.gets
       new_entry = parse_line_array(line, date)
       batch << new_entry if new_entry[1] > after
