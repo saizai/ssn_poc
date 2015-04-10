@@ -50,6 +50,8 @@ class DeathMasterFile < ActiveRecord::Base
   end
 
   def self.import_from_file filename, after = 0, date = Date.today
+    old_logger = ActiveRecord::Base.logger
+    ActiveRecord::Base.logger = nil
     file = File.open(filename, 'r')
     batch = []
     column_names = [:change_type, :ssn_an, :ssn_gn, :ssn_sn, :last_name, :name_suffix,
@@ -67,6 +69,7 @@ class DeathMasterFile < ActiveRecord::Base
     end
     import column_names, batch, validate: false,
       on_duplicate_key_update: 'id=id'  # ignore duplicates
+    ActiveRecord::Base.logger = old_logger
     file.close
   end
 end
