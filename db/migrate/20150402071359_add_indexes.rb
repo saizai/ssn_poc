@@ -25,28 +25,34 @@ class AddIndexes < ActiveRecord::Migration
       add_index t, [:first_name, :lifespan]
     end
 
-    DeathMasterFile.find_each do |r|
-      if r.birth_date
-        dob = r.birth_date
-      elsif r.birth_year && r.birth_month
-        if r.death_day
-          dob = Date.new(r.birth_year, r.birth_month, r.death_day)
-        else
-          dob = Date.new(r.birth_year, r.birth_month, 1)
-        end
-      else
-        next
-      end
+    # Updating ~86M rows is not a job for ruby.
+    # See http://dba.stackexchange.com/questions/97543/
+    execute <<-SQL
+      SET SESSION sql_mode = 'strict_all_tables';
+      SET SESSION sql_warnings = 1;
+      \W
+      DELIMITER //
+      DROP PROCEDURE IF EXISTS update_dmf_lifespan//
+      CREATE PROCEDURE update_dmf_lifespan(INOUT i INT)
+      BEGIN
+       SET @i = i;
+       SET @max = (select id from death_master_files order by id desc limit 1);
+       setloop: LOOP
+        UPDATE death_master_files SET lifespan = DATEDIFF(MAKEDATE(death_year, 1) + INTERVAL (death_month-1) MONTH + INTERVAL (IFNULL(IFNULL(death_day,birth_day),1)-1) DAY, MAKEDATE(birth_year, 1) + INTERVAL (birth_month-1) MONTH + INTERVAL (IFNULL(birth_day,1)-1) DAY) WHERE DATEDIFF(MAKEDATE(death_year, 1) + INTERVAL (death_month-1) MONTH + INTERVAL (IFNULL(IFNULL(death_day,birth_day),1)-1) DAY, MAKEDATE(birth_year, 1) + INTERVAL (birth_month-1) MONTH + INTERVAL (IFNULL(birth_day,1)-1) DAY) >= 0 and id BETWEEN @i AND @i+10000;
+        SELECT @i, ROW_COUNT(), LAST_INSERT_ID();
+        SELECT *, DATEDIFF(MAKEDATE(death_year, 1) + INTERVAL (death_month-1) MONTH + INTERVAL (IFNULL(IFNULL(death_day,birth_day),1)-1) DAY, MAKEDATE(birth_year, 1) + INTERVAL (birth_month-1) MONTH + INTERVAL (IFNULL(birth_day,1)-1) DAY) as diff from death_master_files WHERE DATEDIFF(MAKEDATE(death_year, 1) + INTERVAL (death_month-1) MONTH + INTERVAL (IFNULL(IFNULL(death_day,birth_day),1)-1) DAY, MAKEDATE(birth_year, 1) + INTERVAL (birth_month-1) MONTH + INTERVAL (IFNULL(birth_day,1)-1) DAY) < 0 and id BETWEEN @i AND @i+10000;
+        SET @i = @i + 10000;
+        IF @i + 10000 > @max THEN
+         LEAVE setloop;
+        END IF;
+       END LOOP setloop;
+      END
+      //
+      SET @i = 1//
+      CALL update_dmf_lifespan(@i)//
+      DROP PROCEDURE IF EXISTS update_dmf_lifespan//
+      DELIMITER ;
+    SQL
 
-      if r.death_date
-        dod = r.death_date
-      elsif r.death_year && r.death_month
-        dod = Date.new(r.death_year, r.death_month, dob.day)
-      else
-        next
-      end
-
-      r.update_attribute :lifespan, (dod-dob).to_i
-    end
   end
 end
