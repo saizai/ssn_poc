@@ -52,6 +52,7 @@ class AddIndexes < ActiveRecord::Migration
       CALL update_dmf_lifespan(@i)//
       DROP PROCEDURE IF EXISTS update_dmf_lifespan//
       DELIMITER ;
+      OPTIMIZE NO_WRITE_TO_BINLOG TABLE death_master_files;
     SQL
 
   end
