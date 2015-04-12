@@ -1,4 +1,3 @@
-gem 'mysql_big_table_migration', git: 'http://github.com/analog-analytics/mysql_big_table_migration'
 
 source 'https://rubygems.org' do
 
@@ -40,7 +39,6 @@ source 'https://rubygems.org' do
   gem 'sdoc'#, '~> 0.4.0', group: :doc
 
   gem 'fcgi'
-  gem 'activerecord-mysql-unsigned'
 
   group :development do
     gem 'capistrano', require: false#, '>= 3.0.1'
@@ -91,6 +89,8 @@ source 'https://rubygems.org' do
     gem 'database_cleaner'
   end
 
+  gem 'activerecord-mysql-unsigned'
+  gem 'mysql_big_table_migration'
   gem 'Empact-activerecord-import'#, '>= 0.4.1' # zdennis hasn't yet imported the import profiling fix; this is a bugfix tracking fork
 
   gem 'groupdate' # https://github.com/ankane/groupdate
