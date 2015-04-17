@@ -9,6 +9,10 @@ source 'https://rubygems.org' do
     gem 'psych'
   end
 
+  # FIXME: sprockets 3 breaks cap rails
+  # https://github.com/capistrano/rails/issues/111
+  gem 'sprockets', '~> 2'
+
   gem 'rails'#, '>= 4.0.1'
   gem 'rake'#, '>= 0.9.2.2'
   # gem 'rack'#, '>= 1.4.1'
@@ -38,7 +42,7 @@ source 'https://rubygems.org' do
   # bundle exec rake doc:rails generates the API under doc/api.
   gem 'sdoc'#, '~> 0.4.0', group: :doc
 
-  gem 'fcgi'
+  # gem 'fcgi'
 
   group :development do
     gem 'capistrano', require: false#, '>= 3.0.1'
