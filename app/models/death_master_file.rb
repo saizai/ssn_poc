@@ -1,6 +1,16 @@
 class DeathMasterFile < ActiveRecord::Base
-  GROUPS = [1, 3, 5, 7, 9, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92, 94, 96, 98, 2, 4, 6, 8, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41, 43, 45, 47, 49, 51, 53, 55, 57, 59, 61, 63, 65, 67, 69, 71, 73, 75, 77, 79, 81, 83, 85, 87, 89, 91, 93, 95, 97, 99]
+  # Order in which ssn_gn are assigned
+  GROUPS = [1, 3, 5, 7, 9, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40,
+    42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82, 84,
+    86, 88, 90, 92, 94, 96, 98, 2, 4, 6, 8, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33,
+    35, 37, 39, 41, 43, 45, 47, 49, 51, 53, 55, 57, 59, 61, 63, 65, 67, 69, 71, 73, 75, 77,
+    79, 81, 83, 85, 87, 89, 91, 93, 95, 97, 99]
 
+  # Assignment of ssn_an to states (/ territories / districts / psuedo-areas)
+  # NI: Not issued
+  # RR: Railroad Board (discontinued July 1, 1963)
+  # PI: Philippine Islands (before independence from US, July 4, 1946)
+  # EE: Enumeration at Entry
   AREAS = {'NH': [*1..3], 'ME': [*4..7], 'VT': [*8..9], 'MA': [*10..34], 'RI': [*35..39],
     'CT': [*40..49], 'NY': [*50..134], 'NJ': [*135..158], 'PA': [*159..211], 'MD': [*212..220],
     'DE': [*221..222], 'VA': [*223..231], 'NC': [232], 'WV': [*232..236],
@@ -18,10 +28,6 @@ class DeathMasterFile < ActiveRecord::Base
     'AS': [586], 'PI': [586], 'RR': [*700..728],
     'EE': [*729..733]
   }
-  # NI: Not issued
-  # RR: Railroad Board (discontinued July 1, 1963)
-  # PI: Philippine Islands (before independence from US, July 4, 1946)
-  # EE: Enumeration at Entry
 
   AN_NAMES = AREAS.inject({}){|h,v| v[1].each{|i| h[i].nil? ? h[i] = v[0].to_s : h[i] += ', ' + v[0].to_s}; h}
 
@@ -29,7 +35,6 @@ class DeathMasterFile < ActiveRecord::Base
   #      :first_name, :middle_name, :verify_proof_code, :death_month, :death_day,
   #      :death_year, :birth_month, :birth_day, :birth_year, :state_of_residence,
   #      :last_known_zip_residence, :last_known_zip_payment, :extra, :as_of]
-
   def self.parse_line_array line, date = Date.today
     [(line[0].blank? ? nil : line[0]), line[1..3].to_i, line[4..5].to_i,
       line[6..9].to_i, (line[10..29].blank? ? nil : line[10..29].strip),
