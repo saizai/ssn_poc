@@ -102,7 +102,7 @@ GEM
     erubis (2.7.0)
     execjs (2.5.2)
     fastercsv (1.5.5)
-    ffi (1.9.8)
+    ffi (1.9.24)
     ffi2-generators (0.1.1)
     friendly_id (5.1.0)
       activerecord (>= 4.0.0)
