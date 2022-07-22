@@ -468,7 +468,7 @@ GEM
     tins (1.5.1)
     turbolinks (2.5.3)
       coffee-rails
-    tzinfo (1.2.8)
+    tzinfo (1.2.10)
       thread_safe (~> 0.1)
     uglifier (2.7.1)
       execjs (>= 0.3.0)
